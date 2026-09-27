@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS2 Team Scouting Dashboard</title>
-    <!-- Підключаємо офіційну бібліотеку Supabase -->
     <script src="https://jsdelivr.net"></script>
-    
     <script>
-        // Ініціалізація бази даних у найпершу чергу!
         const SUPABASE_URL = "https://supabase.co";
         const SUPABASE_KEY = "sb_publishable_L0eOvR_OkbehqxTcNiZOA_Rw1i3jqw"; 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -23,11 +20,11 @@
             try {
                 const { data: players, error } = await supabaseClient.from('players').select('*').eq('status', 'review');
                 if (error) {
-                    grid.innerHTML = `<div class="no-players">Помилка Supabase: ${error.message}</div>`;
+                    grid.innerHTML = `<div class="no-players">Ошибка Supabase: ${error.message}</div>`;
                     return;
                 }
                 if (!players || players.length === 0) {
-                    grid.innerHTML = '<div class="no-players">Кандидатів поки немає. Будь першим!</div>';
+                    grid.innerHTML = '<div class="no-players">Кандидатов пока нет. Будь первым!</div>';
                     return;
                 }
                 grid.innerHTML = '';
@@ -42,11 +39,11 @@
                                 </div>
                             </div>
                             <div class="card-body">${p.about}</div>
-                            <div class="card-footer"><span class="status-tag status-review">Перевірка</span></div>
+                            <div class="card-footer"><span class="status-tag status-review">Проверка</span></div>
                         </div>`;
                 });
             } catch (err) {
-                grid.innerHTML = `<div class="no-players">Критична помилка: ${err.message}</div>`;
+                grid.innerHTML = `<div class="no-players">Критическая ошибка: ${err.message}</div>`;
             }
         }
 
@@ -60,21 +57,20 @@
                 const { error } = await supabaseClient.from('players').insert([{ nickname, elo, role, about, status: 'review' }]);
                 
                 if (error) {
-                    alert('Помилка запису в базу: ' + error.message);
+                    alert('Ошибка записи в базу: ' + error.message);
                 } else {
-                    alert('Анкету успішно надіслано в базу даних!');
+                    alert('Анкета успешно отправлена в базу данных!');
                     toggleModal(false);
                     document.getElementById('scoutingForm').reset();
                     loadCandidates();
                 }
             } catch (err) {
-                alert('Помилка відправки: ' + err.message);
+                alert('Ошибка отправки: ' + err.message);
             }
         }
 
         window.onload = loadCandidates;
     </script>
-
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Inter, sans-serif; }
         body { background-color: #16191c; color: #e1e6eb; display: flex; min-height: 100vh; overflow-x: hidden; }
@@ -121,7 +117,6 @@
         <a href="team.html" class="menu-item">Мой Стак</a>
         <a href="tournaments.html" class="menu-item">Турниры</a>
     </div>
-
     <div class="main-content">
         <div class="dash-header">
             <div>
@@ -130,7 +125,6 @@
             </div>
             <button class="faceit-btn" onclick="toggleModal(true)">Подать анкету</button>
         </div>
-
         <div class="section-title">Текущий Ростер</div>
         <div class="grid">
             <div class="player-card" style="border-left: 4px solid #00c864;">
@@ -145,13 +139,11 @@
                 <div class="card-footer"><span class="status-tag status-accepted">В составе</span></div>
             </div>
         </div>
-
         <div class="section-title">Кандидаты на рассмотрении</div>
         <div class="grid" id="candidates-grid">
             <div class="no-players">Загрузка кандидатов...</div>
         </div>
     </div>
-
     <div class="modal-overlay" id="formModal">
         <div class="modal-box">
             <h2>Подать заявку в команду</h2>
@@ -166,23 +158,3 @@
                 </div>
                 <div class="form-group">
                     <label>Роль в игре</label>
-                    <select id="form-role">
-                        <option>Rifler (Стрелок)</option>
-                        <option>AWPer (Снайпер)</option>
-                        <option>Entry Fragger</option>
-                        <option>Support</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>О себе (Опыт, прайм)</label>
-                    <textarea id="form-about" rows="3" required></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="cancel-btn" onclick="toggleModal(false)">Отмена</button>
-                    <button type="submit" class="faceit-btn">Отправить</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</body>
-</html>
