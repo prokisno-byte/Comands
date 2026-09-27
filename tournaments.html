@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Турниры и Праки | CS2Hub</title>
+    <style>
+        /* Базовые стили FACEIT */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Inter, sans-serif; }
+        body { background-color: #16191c; color: #e1e6eb; display: flex; min-height: 100vh; }
+        
+        .sidebar { width: 240px; background-color: #1e2226; border-right: 1px solid #2d3339; display: flex; flex-direction: column; padding: 20px 10px; position: fixed; height: 100vh; }
+        .logo { font-weight: 900; font-size: 20px; color: #ff5500; text-transform: uppercase; padding-left: 15px; margin-bottom: 40px; letter-spacing: 1px; }
+        .logo span { color: #fff; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; color: #a2a8b3; text-decoration: none; border-radius: 6px; font-weight: 600; margin-bottom: 5px; transition: all 0.2s; }
+        .menu-item:hover, .menu-item.active { background-color: #2d3339; color: #fff; }
+        .menu-item.active { border-left: 4px solid #ff5500; border-radius: 0 6px 6px 0; }
+        
+        .main-content { margin-left: 240px; flex: 1; padding: 40px; background: radial-gradient(circle at top right, #25221d 0%, #16191c 50%); }
+        .dash-header { margin-bottom: 40px; }
+        .dash-header h1 { font-size: 28px; font-weight: 800; text-transform: uppercase; }
+        
+        .section-title { font-size: 14px; text-transform: uppercase; color: #8c94a0; letter-spacing: 1px; margin-bottom: 20px; font-weight: 700; }
+        
+        /* Сетка матчей */
+        .matches-list { display: flex; flex-direction: column; gap: 15px; max-width: 800px; }
+        .match-card { background-color: #1e2226; border: 1px solid #2d3339; border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .match-info { display: flex; flex-direction: column; gap: 5px; }
+        .match-type { font-size: 11px; text-transform: uppercase; font-weight: 700; padding: 3px 6px; border-radius: 4px; width: fit-content; }
+        .type-prac { background-color: rgba(0, 150, 255, 0.1); color: #0096ff; }
+        .type-tournament { background-color: rgba(255, 85, 0, 0.1); color: #ff5500; }
+        
+        .match-title { font-size: 18px; font-weight: 700; color: #fff; margin-top: 5px; }
+        .match-time { font-size: 13px; color: #8c94a0; }
+        
+        .match-status { font-size: 13px; font-weight: 700; text-transform: uppercase; color: #ffaa00; }
+    </style>
+</head>
+<body>
 
+    <!-- Сайдбар слева (Здесь active у "Турниры") -->
+    <div class="sidebar">
+        <div class="logo">CS2<span>Hub</span></div>
+        <a href="index.html" class="menu-item">Дашборд</a>
+        <a href="team.html" class="menu-item">Мой Стак</a>
+        <a href="tournaments.html" class="menu-item active">Турниры</a>
+    </div>
+
+    <!-- Контент страницы "Турниры" -->
+    <div class="main-content">
+        <div class="dash-header">
+            <h1>Турниры & Праки</h1>
+            <p style="color: #8c94a0; margin-top: 5px;">Расписание ближайших игр и тренировок команды</p>
+        </div>
+
+        <div class="section-title">Предстоящие игры</div>
+        
+        <div class="matches-list">
+            <!-- Карточка 1: Праки -->
+            <div class="match-card">
+                <div class="match-info">
+                    <span class="match-type type-prac">Тренировка (Prac)</span>
+                    <div class="match-title">CS2Hub Стак vs FastMix5</div>
+                    <div class="match-time">Сегодня, 20:00 (Карты: Mirage, Anubis)</div>
+                </div>
+                <div class="match-status" style="color: #00c864;">Подтверждено</div>
+            </div>
+
+            <!-- Карточка 2: Турнир -->
+            <div class="match-card">
+                <div class="match-info">
+                    <span class="match-type type-tournament">FACEIT Community Cup</span>
+                    <div class="match-title">Сетка 5v5 Single Elimination</div>
+                    <div class="match-time">Суббота, 17:00 (Check-in в 16:30)</div>
+                </div>
+                <div class="match-status">Ожидание соперника</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
