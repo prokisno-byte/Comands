@@ -50,7 +50,7 @@
         <div class="logo">CS2<span>Hub</span></div>
         <a href="index.html" class="menu-item active">Дашборд</a>
         <a href="team.html" class="menu-item">Мой Стак</a>
-        <a href="tournaments.html" class="menu-item">Турниры</a>
+        <a href="tournaments.html" class="menu-item">Турнины</a>
     </div>
 
     <div class="main-content">
@@ -121,7 +121,7 @@
     <script>
         const SUPABASE_URL = "https://supabase.co";
         const SUPABASE_KEY = "sb_publishable_L0eOvR_OkbehqxTcNiZOA_Rw1i3jqw"; 
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         function toggleModal(show) {
             const modal = document.getElementById('formModal');
@@ -131,7 +131,7 @@
         async function loadCandidates() {
             const grid = document.getElementById('candidates-grid');
             try {
-                const { data: players, error } = await _supabase.from('players').select('*').eq('status', 'review');
+                const { data: players, error } = await supabaseClient.from('players').select('*').eq('status', 'review');
                 if (error) {
                     grid.innerHTML = `<div class="no-players">Ошибка Supabase: ${error.message}</div>`;
                     return;
@@ -167,7 +167,7 @@
                 const role = document.getElementById('form-role').value;
                 const about = document.getElementById('form-about').value;
 
-                const { error } = await _supabase.from('players').insert([{ nickname, elo, role, about, status: 'review' }]);
+                const { error } = await supabaseClient.from('players').insert([{ nickname, elo, role, about, status: 'review' }]);
                 
                 if (error) {
                     alert('Ошибка при записи в базу: ' + error.message);
