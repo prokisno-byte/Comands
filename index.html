@@ -4,8 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS2 Team Scouting Dashboard</title>
-    <!-- ИСПРАВЛЕНО: Подключаем официальную библиотеку Supabase правильно -->
+    <!-- Підключаємо офіційну бібліотеку Supabase -->
     <script src="https://jsdelivr.net"></script>
+    
+    <script>
+        // Ініціалізація бази даних у найпершу чергу!
+        const SUPABASE_URL = "https://supabase.co";
+        const SUPABASE_KEY = "sb_publishable_L0eOvR_OkbehqxTcNiZOA_Rw1i3jqw"; 
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function toggleModal(show) {
+            document.getElementById('formModal').style.display = show ? 'flex' : 'none';
+        }
+
+        async function loadCandidates() {
+            const grid = document.getElementById('candidates-grid');
+            if (!grid) return;
+            try {
+                const { data: players, error } = await supabaseClient.from('players').select('*').eq('status', 'review');
+                if (error) {
+                    grid.innerHTML = `<div class="no-players">Помилка Supabase: ${error.message}</div>`;
+                    return;
+                }
+                if (!players || players.length === 0) {
+                    grid.innerHTML = '<div class="no-players">Кандидатів поки немає. Будь першим!</div>';
+                    return;
+                }
+                grid.innerHTML = '';
+                players.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="player-card">
+                            <div class="card-header">
+                                <div class="lvl-badge">${p.elo}</div>
+                                <div>
+                                    <div class="player-name">${p.nickname}</div>
+                                    <div class="player-role">${p.role}</div>
+                                </div>
+                            </div>
+                            <div class="card-body">${p.about}</div>
+                            <div class="card-footer"><span class="status-tag status-review">Перевірка</span></div>
+                        </div>`;
+                });
+            } catch (err) {
+                grid.innerHTML = `<div class="no-players">Критична помилка: ${err.message}</div>`;
+            }
+        }
+
+        async function sendData() {
+            try {
+                const nickname = document.getElementById('form-nickname').value;
+                const elo = document.getElementById('form-elo').value;
+                const role = document.getElementById('form-role').value;
+                const about = document.getElementById('form-about').value;
+
+                const { error } = await supabaseClient.from('players').insert([{ nickname, elo, role, about, status: 'review' }]);
+                
+                if (error) {
+                    alert('Помилка запису в базу: ' + error.message);
+                } else {
+                    alert('Анкету успішно надіслано в базу даних!');
+                    toggleModal(false);
+                    document.getElementById('scoutingForm').reset();
+                    loadCandidates();
+                }
+            } catch (err) {
+                alert('Помилка відправки: ' + err.message);
+            }
+        }
+
+        window.onload = loadCandidates;
+    </script>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Inter, sans-serif; }
         body { background-color: #16191c; color: #e1e6eb; display: flex; min-height: 100vh; overflow-x: hidden; }
@@ -73,9 +142,7 @@
                     </div>
                 </div>
                 <div class="card-body">Основатель стака. Координирую игру, расписываю демки. Ищу жестких рифлеров.</div>
-                <div class="card-footer">
-                    <span class="status-tag status-accepted">В составе</span>
-                </div>
+                <div class="card-footer"><span class="status-tag status-accepted">В составе</span></div>
             </div>
         </div>
 
@@ -117,75 +184,5 @@
             </form>
         </div>
     </div>
-
-    <script>
-        // ИСПРАВЛЕНО: Указан твой личный URL проекта из Supabase
-        const SUPABASE_URL = "https://rnyaitivnmhukejdvmhu.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_L0eOvR_OkbehqxTcNiZOA_Rw1i3jqw"; 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        function toggleModal(show) {
-            const modal = document.getElementById('formModal');
-            modal.style.display = show ? 'flex' : 'none';
-        }
-
-        // ИСПРАВЛЕНО: Восстановлена функция полной загрузки игроков
-        async function loadCandidates() {
-            const grid = document.getElementById('candidates-grid');
-            try {
-                const { data: players, error } = await supabaseClient.from('players').select('*').eq('status', 'review');
-                if (error) {
-                    grid.innerHTML = `<div class="no-players">Ошибка Supabase: ${error.message}</div>`;
-                    return;
-                }
-                if (!players || players.length === 0) {
-                    grid.innerHTML = '<div class="no-players">Кандидатов пока нет. Будь первым!</div>';
-                    return;
-                }
-                grid.innerHTML = '';
-                players.forEach(player => {
-                    grid.innerHTML += `
-                        <div class="player-card">
-                            <div class="card-header">
-                                <div class="lvl-badge">${player.elo}</div>
-                                <div>
-                                    <div class="player-name">${player.nickname}</div>
-                                    <div class="player-role">${player.role}</div>
-                                </div>
-                            </div>
-                            <div class="card-body">${player.about}</div>
-                            <div class="card-footer"><span class="status-tag status-review">Проверка</span></div>
-                        </div>`;
-                });
-            } catch (err) {
-                grid.innerHTML = `<div class="no-players">Критическая ошибка: ${err.message}</div>`;
-            }
-        }
-
-        // ИСПРАВЛЕНО: Восстановлена функция отправки анкет
-        async function sendData() {
-            try {
-                const nickname = document.getElementById('form-nickname').value;
-                const elo = document.getElementById('form-elo').value;
-                const role = document.getElementById('form-role').value;
-                const about = document.getElementById('form-about').value;
-
-                const { error } = await supabaseClient.from('players').insert([{ nickname, elo, role, about, status: 'review' }]);
-                
-                if (error) {
-                    alert('Ошибка при записи в базу: ' + error.message);
-                } else {
-                    alert('Анкета успешно отправлена в базу данных!');
-                    toggleModal(false);
-                    document.getElementById('scoutingForm').reset();
-                    loadCandidates();
-                }
-            } catch (err) {
-                alert('Ошибка отправки: ' + err.message);
-            }
-        }
-
-        window.onload = loadCandidates;
-    </script>
 </body>
 </html>
