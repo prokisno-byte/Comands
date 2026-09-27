@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS2 Team Scouting Dashboard</title>
+    <!-- Подключаем официальный клиент Supabase -->
     <script src="https://jsdelivr.net"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Inter, sans-serif; }
@@ -87,7 +88,7 @@
     <div class="modal-overlay" id="formModal">
         <div class="modal-box">
             <h2>Подать заявку в команду</h2>
-            <form id="scoutingForm">
+            <form id="scoutingForm" onsubmit="event.preventDefault(); sendData();">
                 <div class="form-group">
                     <label>Никнейм</label>
                     <input type="text" id="form-nickname" required>
@@ -129,49 +130,57 @@
 
         async function loadCandidates() {
             const grid = document.getElementById('candidates-grid');
-            const { data: players, error } = await _supabase.from('players').select('*').eq('status', 'review');
-            if (error) {
-                grid.innerHTML = `<div class="no-players">Ошибка загрузки: ${error.message}</div>`;
-                return;
-            }
-            if (!players || players.length === 0) {
-                grid.innerHTML = '<div class="no-players">Кандидатов пока нет. Будь первым!</div>';
-                return;
-            }
-            grid.innerHTML = '';
-            players.forEach(player => {
-                grid.innerHTML += `
-                    <div class="player-card">
-                        <div class="card-header">
-                            <div class="lvl-badge">${player.elo}</div>
-                            <div>
-                                <div class="player-name">${player.nickname}</div>
-                                <div class="player-role">${player.role}</div>
+            try {
+                const { data: players, error } = await _supabase.from('players').select('*').eq('status', 'review');
+                if (error) {
+                    grid.innerHTML = `<div class="no-players">Ошибка Supabase: ${error.message}</div>`;
+                    return;
+                }
+                if (!players || players.length === 0) {
+                    grid.innerHTML = '<div class="no-players">Кандидатов пока нет. Будь первым!</div>';
+                    return;
+                }
+                grid.innerHTML = '';
+                players.forEach(player => {
+                    grid.innerHTML += `
+                        <div class="player-card">
+                            <div class="card-header">
+                                <div class="lvl-badge">${player.elo}</div>
+                                <div>
+                                    <div class="player-name">${player.nickname}</div>
+                                    <div class="player-role">${player.role}</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-body">${player.about}</div>
-                        <div class="card-footer"><span class="status-tag status-review">Проверка</span></div>
-                    </div>`;
-            });
+                            <div class="card-body">${player.about}</div>
+                            <div class="card-footer"><span class="status-tag status-review">Проверка</span></div>
+                        </div>`;
+                });
+            } catch (err) {
+                grid.innerHTML = `<div class="no-players">Критическая ошибка: ${err.message}</div>`;
+            }
         }
 
-        document.getElementById('scoutingForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const nickname = document.getElementById('form-nickname').value;
-            const elo = document.getElementById('form-elo').value;
-            const role = document.getElementById('form-role').value;
-            const about = document.getElementById('form-about').value;
+        async function sendData() {
+            try {
+                const nickname = document.getElementById('form-nickname').value;
+                const elo = document.getElementById('form-elo').value;
+                const role = document.getElementById('form-role').value;
+                const about = document.getElementById('form-about').value;
 
-            const { error } = await _supabase.from('players').insert([{ nickname, elo, role, about, status: 'review' }]);
-            if (error) {
-                alert('Ошибка при отправке: ' + error.message);
-            } else {
-                alert('Анкета успешно отправлена в базу данных!');
-                toggleModal(false);
-                document.getElementById('scoutingForm').reset();
-                loadCandidates();
+                const { error } = await _supabase.from('players').insert([{ nickname, elo, role, about, status: 'review' }]);
+                
+                if (error) {
+                    alert('Ошибка при записи в базу: ' + error.message);
+                } else {
+                    alert('Анкета успешно отправлена в базу данных!');
+                    toggleModal(false);
+                    document.getElementById('scoutingForm').reset();
+                    loadCandidates();
+                }
+            } catch (err) {
+                alert('Ошибка отправки: ' + err.message);
             }
-        });
+        }
 
         window.onload = loadCandidates;
     </script>
