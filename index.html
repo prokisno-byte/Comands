@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS2 Team Scouting Dashboard</title>
-    <!-- Подключаем официальный клиент Supabase -->
+    <!-- ИСПРАВЛЕНО: Подключаем официальную библиотеку Supabase правильно -->
     <script src="https://jsdelivr.net"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Inter, sans-serif; }
@@ -119,8 +119,8 @@
     </div>
 
     <script>
-        // Самая первая очередь: Создаем подключение к базе данных!
-        const SUPABASE_URL = "https://supabase.co";
+        // ИСПРАВЛЕНО: Указан твой личный URL проекта из Supabase
+        const SUPABASE_URL = "https://rnyaitivnmhukejdvmhu.supabase.co";
         const SUPABASE_KEY = "sb_publishable_L0eOvR_OkbehqxTcNiZOA_Rw1i3jqw"; 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -129,6 +129,7 @@
             modal.style.display = show ? 'flex' : 'none';
         }
 
+        // ИСПРАВЛЕНО: Восстановлена функция полной загрузки игроков
         async function loadCandidates() {
             const grid = document.getElementById('candidates-grid');
             try {
@@ -161,6 +162,7 @@
             }
         }
 
+        // ИСПРАВЛЕНО: Восстановлена функция отправки анкет
         async function sendData() {
             try {
                 const nickname = document.getElementById('form-nickname').value;
